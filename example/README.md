@@ -21,7 +21,7 @@
 <h3 align="center">Lib flutter client</h3>
 
   <p align="center">
-    This lib proprovides just enough to get started with your Javascript application.
+    This lib provides just enough to get started creating your application with lenra backend.
     <br />
     <br />
     <a href="https://github.com/lenra-io/template-javascript/issues">Report Bug</a>
