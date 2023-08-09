@@ -18,6 +18,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const LenraOauth2Widget(
+        /* TODO: Allow this widget to set connection parameters (host, port, etc.)
+         * and pass them to the provider in the lib. It will probably be renamed to LenraInitializer or something like that.
+         * /!\ This will have to be initialized before the MaterialApp, otherwise it will not work.
+         */
         child: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
