@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lenra/lenra.dart';
 
@@ -17,12 +18,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LenraOauth2Widget(
-        /* TODO: Allow this widget to set connection parameters (host, port, etc.)
-         * and pass them to the provider in the lib. It will probably be renamed to LenraInitializer or something like that.
-         * /!\ This will have to be initialized before the MaterialApp, otherwise it will not work.
-         */
-        child: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LenraApplicationWidget(
+        clientId: 'XXX-XXX-XXX',
+        // If is in debug mode then use the local host else use the remote host
+        host: kDebugMode ? 'http://localhost:4444' : 'https://auth.lenra.io',
+        oauthRedirectUrl: kIsWeb
+            ? '${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}/redirect.html'
+            : 'com.example.client://',
+        scopes: const ['app:websocket'],
+        customUriScheme: 'com.example.client',
+        child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
