@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:lenra/lenra.dart';
 
 void main() {
@@ -18,13 +17,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => TokenProvider()),
-        ],
-        child: const LenraOauth2Widget(
-          child: MyHomePage(title: 'Flutter Demo Home Page'),
-        ),
+      home: const LenraOauth2Widget(
+        child: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }
