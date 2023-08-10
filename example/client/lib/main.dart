@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lenra/lenra.dart';
+import 'package:lenra_client/lenra_client.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LenraApplicationWidget(
+        appName: 'Example Client',
         clientId: 'XXX-XXX-XXX',
         // If is in debug mode then use the local host else use the remote host
         host: kDebugMode ? 'http://localhost:4444' : 'https://auth.lenra.io',

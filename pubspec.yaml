@@ -1,4 +1,4 @@
-name: lenra
+name: lenra_client
 description: Official Lenra lib to create custom client apps in Flutter.
 version: 0.0.0
 homepage: https://www.lenra.io

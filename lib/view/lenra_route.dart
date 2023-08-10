@@ -1,4 +1,4 @@
-import 'package:lenra/view/lenra_app.dart';
+import 'package:lenra_client/view/lenra_app.dart';
 import 'package:json_patch/json_patch.dart';
 import 'package:phoenix_wings/html.dart';
 
@@ -11,6 +11,7 @@ class LenraRoute {
   late PhoenixChannel channel;
 
   LenraRoute(LenraApp lenraApp, this.route, this.onChange) {
+    print("Join channel $route with app $lenraApp");
     channel = lenraApp.socket.channel("route:$route", {"mode": "json"});
 
     channel.on("ui", (data, ref, joinRef) {

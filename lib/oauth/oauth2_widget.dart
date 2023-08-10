@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:lenra/lenra.dart';
+import 'package:lenra_client/lenra_client.dart';
 import 'package:oauth2_client/access_token_response.dart';
-import 'package:provider/provider.dart';
 
 /// A widget that handles the Lenra OAuth2 authentication flow.
 class LenraApplicationWidget extends StatelessWidget {
   /// The UI to show after the authentication flow.
-  final Widget? child;
+  final Widget child;
 
   /// The lenra instance's hostname and port.
   final String host;
 
   /// The OAuth2 redirect URL.
   final String oauthRedirectUrl;
+
+  /// The name of the application.
+  final String appName;
 
   /// The OAuth2 client ID.
   final String clientId;
@@ -32,6 +34,7 @@ class LenraApplicationWidget extends StatelessWidget {
       required this.child,
       required this.host,
       required this.oauthRedirectUrl,
+      required this.appName,
       required this.clientId,
       this.clientSecret,
       this.scopes = const ["app:websocket"],
@@ -49,25 +52,23 @@ class LenraApplicationWidget extends StatelessWidget {
       scopes: scopes,
     );
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TokenProvider()),
-      ],
-      child: FutureBuilder(
-        future: oauth2.refreshToken(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Text('Error ${snapshot.error}');
-            }
-            context.read<TokenProvider>().token =
-                snapshot.data as AccessTokenResponse;
-            return child!;
-          } else {
-            return const CircularProgressIndicator();
+    return FutureBuilder(
+      future: oauth2.refreshToken(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Error ${snapshot.error}');
           }
-        },
-      ),
+
+          return LenraApp(
+            appName,
+            token: snapshot.data as AccessTokenResponse,
+            child: child,
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
