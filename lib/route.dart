@@ -1,8 +1,6 @@
-import 'package:lenra_client/view/lenra_app.dart';
+import 'package:lenra_client/socket.dart';
 import 'package:json_patch/json_patch.dart';
 import 'package:phoenix_wings/html.dart';
-
-typedef ListenerCall = Function(Map<String, dynamic>);
 
 class LenraRoute {
   Map<String, dynamic>? json;
@@ -10,9 +8,9 @@ class LenraRoute {
   void Function(Map<String, dynamic>) onChange;
   late PhoenixChannel channel;
 
-  LenraRoute(LenraApp lenraApp, this.route, this.onChange) {
-    print("Join channel $route with app $lenraApp");
-    channel = lenraApp.socket.channel("route:$route", {"mode": "json"});
+  LenraRoute(LenraSocket lenraSocket, this.route, this.onChange) {
+    print("Join channel $route with app $lenraSocket");
+    channel = lenraSocket.socket.channel("route:$route", {"mode": "json"});
 
     channel.on("ui", (data, ref, joinRef) {
       json = (data as Map<String, dynamic>);

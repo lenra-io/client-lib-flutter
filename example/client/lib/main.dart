@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LenraApplicationWidget(
+      home: LenraApplication(
         appName: 'Example Client',
         clientId: 'XXX-XXX-XXX',
         // If is in debug mode then use the local host else use the remote host
@@ -41,9 +41,14 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LenraWidget(
+    return LenraView(
       route: "/counter/me",
-      builder: (ListenerCall listener, Map<String, dynamic> json) => Scaffold(
+      builder: (
+        BuildContext context,
+        Map<String, dynamic> json,
+        ListenerCaller callListener,
+      ) =>
+          Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(title),
@@ -63,7 +68,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => listener(json["onIncrement"]),
+          onPressed: () => callListener(json["onIncrement"]),
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.

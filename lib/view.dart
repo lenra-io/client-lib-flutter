@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lenra_client/view/lenra_app.dart';
-import 'package:lenra_client/view/lenra_route.dart';
+import 'package:lenra_client/socket.dart';
+import 'package:lenra_client/route.dart';
 
-class LenraWidget extends StatelessWidget {
+typedef ListenerCaller = Function(Map<String, dynamic>);
+typedef LenraViewBuilder = Widget Function(
+    BuildContext, Map<String, dynamic>, ListenerCaller);
+
+class LenraView extends StatelessWidget {
   final String route;
-  final Widget Function(ListenerCall, Map<String, dynamic>) builder;
+  final LenraViewBuilder builder;
   final Widget loader;
-  const LenraWidget({
+  const LenraView({
     required this.route,
     required this.builder,
     required this.loader,
@@ -16,7 +20,7 @@ class LenraWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LenraRouteWidget(
-      app: LenraApp.of(context),
+      socket: LenraSocket.of(context),
       route: route,
       builder: builder,
       loader: loader,
@@ -25,13 +29,13 @@ class LenraWidget extends StatelessWidget {
 }
 
 class LenraRouteWidget extends StatefulWidget {
-  final LenraApp app;
+  final LenraSocket socket;
   final String route;
-  final Widget Function(ListenerCall, Map<String, dynamic>) builder;
+  final LenraViewBuilder builder;
   final Widget loader;
-  LenraRouteWidget({
+  const LenraRouteWidget({
     super.key,
-    required this.app,
+    required this.socket,
     required this.route,
     required this.builder,
     required this.loader,
@@ -50,7 +54,7 @@ class LenraRouteWidgetState extends State<LenraRouteWidget> {
   @override
   initState() {
     super.initState();
-    lenraRoute = LenraRoute(widget.app, widget.route, updateState);
+    lenraRoute = LenraRoute(widget.socket, widget.route, updateState);
   }
 
   @override
@@ -58,7 +62,7 @@ class LenraRouteWidgetState extends State<LenraRouteWidget> {
     if (json == null) {
       return widget.loader;
     }
-    return widget.builder(lenraRoute.callListener, json!);
+    return widget.builder(context, json!, lenraRoute.callListener);
   }
 
   @override

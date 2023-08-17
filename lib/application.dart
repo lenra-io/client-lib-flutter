@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lenra_client/lenra_client.dart';
+import 'package:lenra_client/oauth2.dart';
+import 'package:lenra_client/socket.dart';
 import 'package:oauth2_client/access_token_response.dart';
 
 /// A widget that handles the Lenra OAuth2 authentication flow.
-class LenraApplicationWidget extends StatelessWidget {
+class LenraApplication extends StatelessWidget {
   /// The UI to show after the authentication flow.
   final Widget child;
 
@@ -29,7 +30,7 @@ class LenraApplicationWidget extends StatelessWidget {
   final List<String> scopes;
 
   /// Creates a new instance of [LenraOauth2Widget].
-  const LenraApplicationWidget(
+  const LenraApplication(
       {Key? key,
       required this.child,
       required this.host,
@@ -60,8 +61,8 @@ class LenraApplicationWidget extends StatelessWidget {
             return Text('Error ${snapshot.error}');
           }
 
-          return LenraApp(
-            appName,
+          return SocketManager(
+            appName: appName,
             token: snapshot.data as AccessTokenResponse,
             child: child,
           );
