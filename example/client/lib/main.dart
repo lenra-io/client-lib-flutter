@@ -6,6 +6,8 @@ void main() {
   runApp(const MyApp());
 }
 
+const String androidApplicationId = 'com.example.client';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,11 +25,12 @@ class MyApp extends StatelessWidget {
         clientId: 'XXX-XXX-XXX',
         // If is in debug mode then use the local host else use the remote host
         host: kDebugMode ? 'http://localhost:4444' : 'https://auth.lenra.io',
-        oauthRedirectUrl: kIsWeb
+        oauthRedirectUri: kIsWeb
             ? '${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}/redirect.html'
-            : 'com.example.client://',
+            : '${androidApplicationId}://',
         scopes: const ['app:websocket'],
-        customUriScheme: 'com.example.client',
+        customUriScheme: getPlatformCustomUriScheme(
+            androidApplicationId: androidApplicationId),
         child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );

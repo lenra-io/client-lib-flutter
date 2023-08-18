@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lenra_client/oauth2.dart';
 import 'package:lenra_client/socket.dart';
 import 'package:oauth2_client/access_token_response.dart';
+import 'package:flutter/foundation.dart';
 
 /// A widget that handles the Lenra OAuth2 authentication flow.
 class LenraApplication extends StatelessWidget {
@@ -12,7 +13,7 @@ class LenraApplication extends StatelessWidget {
   final String host;
 
   /// The OAuth2 redirect URL.
-  final String oauthRedirectUrl;
+  final String oauthRedirectUri;
 
   /// The name of the application.
   final String appName;
@@ -25,6 +26,11 @@ class LenraApplication extends StatelessWidget {
   /// It is only used to identify the app.
   final String? clientSecret;
 
+  /// The OAuth2 custom URI scheme.
+  /// This is specific to the platform.
+  /// Use getPlatformCustomUriScheme to get the correct value.
+  final String customUriScheme;
+
   /// The OAuth2 scopes.
   /// Defaults to `["app:websocket"]`
   final List<String> scopes;
@@ -34,22 +40,22 @@ class LenraApplication extends StatelessWidget {
       {Key? key,
       required this.child,
       required this.host,
-      required this.oauthRedirectUrl,
+      required this.oauthRedirectUri,
       required this.appName,
       required this.clientId,
+      required this.customUriScheme,
       this.clientSecret,
-      this.scopes = const ["app:websocket"],
-      String? customUriScheme})
+      this.scopes = const ["app:websocket"]})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     LenraOauth2Client oauth2 = LenraOauth2Client(
       host: host,
-      redirectUrl: oauthRedirectUrl,
+      redirectUri: oauthRedirectUri,
       clientId: clientId,
       clientSecret: clientSecret,
-      customUriScheme: 'com.example.client',
+      customUriScheme: customUriScheme,
       scopes: scopes,
     );
 
@@ -71,5 +77,24 @@ class LenraApplication extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+/// Get the custom uri scheme of the app for the current plateform.
+String getPlatformCustomUriScheme({
+  String androidApplicationId = "com.example.app",
+}) {
+  // It is important to check for web first because web is also returning the TargetPlatform of the device.
+  if (kIsWeb) {
+    return "http";
+  } else if (defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux) {
+    // Apparently the customUriScheme should be the full uri for Windows and Linux for oauth2_client to work properly
+    return const String.fromEnvironment("OAUTH_REDIRECT_BASE_URL",
+        defaultValue: "http://localhost:10000");
+  } else if (defaultTargetPlatform == TargetPlatform.android) {
+    return androidApplicationId;
+  } else {
+    return "http";
   }
 }

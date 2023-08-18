@@ -9,17 +9,17 @@ class LenraOauth2Client {
   /// Creates the helper usable to refresh the OAuth2 token.
   LenraOauth2Client(
       {required String host,
-      required String redirectUrl,
+      required String redirectUri,
       required String clientId,
+      required String customUriScheme,
       String? clientSecret,
-      List<String> scopes = const [],
-      String customUriScheme = 'com.example.client'}) {
+      List<String> scopes = const []}) {
     helper = OAuth2Helper(
       OAuth2Client(
           authorizeUrl: '$host/oauth2/auth',
           tokenUrl: '$host/oauth2/token',
           revokeUrl: '$host/oauth2/revoke',
-          redirectUri: redirectUrl,
+          redirectUri: redirectUri,
           customUriScheme: customUriScheme),
       grantType: OAuth2Helper.authorizationCode,
       clientId: clientId,
