@@ -9,7 +9,7 @@ on:
       - "*.x"
 
 env:
-  flutter_version: "3.3.9"
+  flutter_version: "3.13.0"
 
 jobs:
   get-next-version:
@@ -30,12 +30,20 @@ jobs:
       id-token: write # Required for authentication using OIDC
     steps:
       - uses: actions/checkout@v3
-      - uses: dart-lang/setup-dart@v1
       - name: Set version
         uses: mikefarah/yq@master
         with:
           cmd: yq -i '.version="${{ env.VERSION }}"' pubspec.yaml
+      # - uses: dart-lang/setup-dart@v1
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
       - name: Install dependencies
-        run: dart pub get
+        run: flutter pub get
       - name: Publish
-        run: dart pub publish --force
+        run: flutter pub publish --force
