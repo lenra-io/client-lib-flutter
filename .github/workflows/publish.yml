@@ -1,9 +1,10 @@
 name: Publish to pub.dev
 
 on:
-  create:
-    tags:
-    - 'v*'
+  release:
+    types: [published]
+    # tags:
+    # - 'v*'
 
 # Publish using custom workflow
 jobs:
