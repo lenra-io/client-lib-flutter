@@ -34,7 +34,7 @@ jobs:
       - name: Set version
         uses: mikefarah/yq@master
         with:
-          cmd: 'yq -i ".version=\"${{ env.VERSION }}\"" pubspec.yaml'
+          cmd: yq -i '.version="'"${{ env.VERSION }}"'"' pubspec.yaml'
       - name: Install dependencies
         run: dart pub get
       - name: Publish
