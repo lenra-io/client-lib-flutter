@@ -34,7 +34,7 @@ jobs:
         uses: mikefarah/yq@master
         with:
           cmd: yq -i '.version="${{ env.VERSION }}"' pubspec.yaml
-      # - uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@v1
       - name: Cache Flutter dependencies
         uses: actions/cache@v2
         with:
