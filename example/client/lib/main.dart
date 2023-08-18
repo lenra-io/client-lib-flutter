@@ -1,12 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lenra_client/widgets.dart';
 
 void main() {
   runApp(const MyApp());
 }
-
-const String androidApplicationId = 'com.example.client';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,14 +20,6 @@ class MyApp extends StatelessWidget {
       home: LenraApplication(
         appName: 'Example Client',
         clientId: 'XXX-XXX-XXX',
-        // If is in debug mode then use the local host else use the remote host
-        host: kDebugMode ? 'http://localhost:4444' : 'https://auth.lenra.io',
-        oauthRedirectUri: kIsWeb
-            ? '${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}/redirect.html'
-            : '${androidApplicationId}://',
-        scopes: const ['app:websocket'],
-        customUriScheme: getPlatformCustomUriScheme(
-            androidApplicationId: androidApplicationId),
         child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );

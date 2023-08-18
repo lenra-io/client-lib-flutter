@@ -1,19 +1,27 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lenra_client/oauth2.dart';
 import 'package:lenra_client/socket.dart';
 import 'package:oauth2_client/access_token_response.dart';
-import 'package:flutter/foundation.dart';
 
 /// A widget that handles the Lenra OAuth2 authentication flow.
 class LenraApplication extends StatelessWidget {
   /// The UI to show after the authentication flow.
   final Widget child;
 
-  /// The lenra instance's hostname and port.
-  final String host;
+  /// The lenra instance's OAuth base URI.
+  /// Defaults to `http://localhost:4444` in debug mode and `https://auth.lenra.io` in release mode.
+  final String oauthBaseUri;
 
-  /// The OAuth2 redirect URL.
-  final String oauthRedirectUri;
+  /// The OAuth2 redirect file path.
+  /// Defaults to `/redirect.html`.
+  final String oauthRedirectPath;
+
+  /// The OAuth2 redirect port.
+  /// Defaults to `Uri.base.port` in web platform and `10000` in other platforms.
+  late int oauthRedirectPort;
 
   /// The name of the application.
   final String appName;
@@ -26,36 +34,54 @@ class LenraApplication extends StatelessWidget {
   /// It is only used to identify the app.
   final String? clientSecret;
 
-  /// The OAuth2 custom URI scheme.
-  /// This is specific to the platform.
-  /// Use getPlatformCustomUriScheme to get the correct value.
-  final String customUriScheme;
+  /// The Android application id.
+  /// Not needed if you don't create an Android app.
+  final String androidApplicaionId;
 
   /// The OAuth2 scopes.
   /// Defaults to `["app:websocket"]`
   final List<String> scopes;
 
+  /// The socket endpoint.
+  /// Defaults to `ws://localhost:4001/socket/websocket` in debug mode and `https://api.lenra.io/socket/websocket` in release mode.
+  final String socketEndpoint;
+
   /// Creates a new instance of [LenraOauth2Widget].
-  const LenraApplication(
-      {Key? key,
-      required this.child,
-      required this.host,
-      required this.oauthRedirectUri,
-      required this.appName,
-      required this.clientId,
-      required this.customUriScheme,
-      this.clientSecret,
-      this.scopes = const ["app:websocket"]})
-      : super(key: key);
+  LenraApplication({
+    super.key,
+    required this.appName,
+    required this.clientId,
+    required this.child,
+    this.androidApplicaionId = 'com.example.client',
+    this.socketEndpoint = kDebugMode
+        ? "ws://localhost:4001/socket/websocket"
+        : "https://api.lenra.io/socket/websocket",
+    this.oauthBaseUri =
+        kDebugMode ? "http://localhost:4444" : "https://auth.lenra.io",
+    this.oauthRedirectPath = "/redirect.html",
+    int? oauthRedirectPort,
+    this.scopes = const ["app:websocket"],
+    this.clientSecret,
+  }) {
+    this.oauthRedirectPort =
+        oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
+  }
 
   @override
   Widget build(BuildContext context) {
     LenraOauth2Client oauth2 = LenraOauth2Client(
-      host: host,
-      redirectUri: oauthRedirectUri,
+      baseUri: oauthBaseUri,
+      redirectUri: getPlatformRedirectUri(
+        androidApplicationId: androidApplicaionId,
+        oauthRedirectPort: oauthRedirectPort,
+        oauthRedirectPath: oauthRedirectPath,
+      ),
       clientId: clientId,
       clientSecret: clientSecret,
-      customUriScheme: customUriScheme,
+      customUriScheme: getPlatformCustomUriScheme(
+        androidApplicationId: androidApplicaionId,
+        oauthRedirectPort: oauthRedirectPort,
+      ),
       scopes: scopes,
     );
 
@@ -69,6 +95,7 @@ class LenraApplication extends StatelessWidget {
 
           return SocketManager(
             appName: appName,
+            endpoint: socketEndpoint,
             token: snapshot.data as AccessTokenResponse,
             child: child,
           );
@@ -77,24 +104,5 @@ class LenraApplication extends StatelessWidget {
         }
       },
     );
-  }
-}
-
-/// Get the custom uri scheme of the app for the current plateform.
-String getPlatformCustomUriScheme({
-  String androidApplicationId = "com.example.app",
-}) {
-  // It is important to check for web first because web is also returning the TargetPlatform of the device.
-  if (kIsWeb) {
-    return "http";
-  } else if (defaultTargetPlatform == TargetPlatform.windows ||
-      defaultTargetPlatform == TargetPlatform.linux) {
-    // Apparently the customUriScheme should be the full uri for Windows and Linux for oauth2_client to work properly
-    return const String.fromEnvironment("OAUTH_REDIRECT_BASE_URL",
-        defaultValue: "http://localhost:10000");
-  } else if (defaultTargetPlatform == TargetPlatform.android) {
-    return androidApplicationId;
-  } else {
-    return "http";
   }
 }

@@ -1,16 +1,20 @@
 import 'package:flutter/widgets.dart';
-import 'package:lenra_client/socket_helper_stub.dart';
+import 'package:lenra_client/socket_helper_stub.dart'
+    if (dart.library.io) 'package:lenra_client/socket_helper_io.dart'
+    if (dart.library.js) 'package:lenra_client/socket_helper_web.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:phoenix_wings/phoenix_wings.dart';
 
 class SocketManager extends StatefulWidget {
   final String appName;
+  final String endpoint;
   final Widget child;
   final AccessTokenResponse token;
 
   const SocketManager({
     Key? key,
     required this.appName,
+    required this.endpoint,
     required this.child,
     required this.token,
   }) : super(key: key);
@@ -36,7 +40,7 @@ class _SocketManagerState extends State<SocketManager> {
       "token": widget.token.accessToken!,
     };
     socket = createPhoenixSocket(
-      "ws://localhost:4001/socket/websocket",
+      widget.endpoint,
       params,
     );
 
