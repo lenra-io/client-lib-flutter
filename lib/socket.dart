@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:lenra_client/socket_helper_stub.dart';
 import 'package:oauth2_client/access_token_response.dart';
-import 'package:phoenix_wings/html.dart';
+import 'package:phoenix_wings/phoenix_wings.dart';
 
 class SocketManager extends StatefulWidget {
   final String appName;
@@ -34,10 +35,9 @@ class _SocketManagerState extends State<SocketManager> {
       "app": widget.appName,
       "token": widget.token.accessToken!,
     };
-    socket = PhoenixSocket(
+    socket = createPhoenixSocket(
       "ws://localhost:4001/socket/websocket",
-      connectionProvider: PhoenixHtmlConnection.provider,
-      socketOptions: PhoenixSocketOptions(params: params),
+      params,
     );
 
     socket.connect();
