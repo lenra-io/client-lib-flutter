@@ -18,7 +18,7 @@
 <br />
 <div align="center">
 
-<h3 align="center">Lib flutter client</h3>
+<h3 align="center">Lenra's Flutter client lib</h3>
 
   <p align="center">
     This lib provides just enough to get started creating your application with lenra backend.
@@ -43,6 +43,9 @@ Add the dependency to your project:
 flutter pub add lenra_client
 ```
 
+You might need some other prerequisites since this lib is still in using [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage).
+Look at this lib documentation to see what you need.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -52,7 +55,6 @@ flutter pub add lenra_client
 Add a `LenraApplication` to your app:
 
 ```dart
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lenra_client/widgets.dart';
 
@@ -74,14 +76,8 @@ class MyApp extends StatelessWidget {
       ),
       home: LenraApplication(
         appName: 'Example Client',
+        // set your own client id for production
         clientId: 'XXX-XXX-XXX',
-        // If is in debug mode then use the local host else use the remote host
-        host: kDebugMode ? 'http://localhost:4444' : 'https://auth.lenra.io',
-        oauthRedirectUrl: kIsWeb
-            ? '${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}/redirect.html'
-            : 'com.example.client://',
-        scopes: const ['app:websocket'],
-        customUriScheme: 'com.example.client',
         child: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
@@ -103,7 +99,12 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LenraView(
       route: "/counter/me",
-      builder: (BuildContext context, Map<String, dynamic> json, ListenerCall listener) => Scaffold(
+      builder: (
+        BuildContext context,
+        Map<String, dynamic> json,
+        ListenerCaller callListener,
+      ) =>
+          Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(title),
@@ -123,7 +124,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => listener(json["onIncrement"]),
+          onPressed: () => callListener(json["onIncrement"]),
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
