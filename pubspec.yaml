@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   json_patch: ^3.0.0
+  logging: ^1.2.0
   oauth2_client: ^3.2.1
   phoenix_wings: ^1.0.2
-  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

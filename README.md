@@ -24,9 +24,9 @@
     This lib provides just enough to get started creating your application with lenra backend.
     <br />
     <br />
-    <a href="https://github.com/lenra-io/template-javascript/issues">Report Bug</a>
+    <a href="https://github.com/lenra-io/client-lib-flutter/issues">Report Bug</a>
     ·
-    <a href="https://github.com/lenra-io/template-javascript/issues">Request Feature</a>
+    <a href="https://github.com/lenra-io/client-lib-flutter/issues">Request Feature</a>
   </p>
 </div>
 
@@ -40,7 +40,7 @@
 Add the dependency to your project:
 
 ```console
-flutter pub add lenra_client_lib
+flutter pub add lenra_client
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -49,12 +49,12 @@ flutter pub add lenra_client_lib
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Add a `LenraApplicationWidget` to your app:
+Add a `LenraApplication` to your app:
 
 ```dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lenra_client/lenra_client.dart';
+import 'package:lenra_client/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LenraApplicationWidget(
+      home: LenraApplication(
         appName: 'Example Client',
         clientId: 'XXX-XXX-XXX',
         // If is in debug mode then use the local host else use the remote host
@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
 
 This while automatically start the authentication flow.
 
-You can then add `LenraWidget` instances to your widget tree to link the widget to a Lenra view and use it data:
+You can then add `LenraView` instances to your widget tree to link the widget to a Lenra view and use it data:
 
 ```dart
 class MyHomePage extends StatelessWidget {
@@ -101,9 +101,9 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LenraWidget(
+    return LenraView(
       route: "/counter/me",
-      builder: (ListenerCall listener, Map<String, dynamic> json) => Scaffold(
+      builder: (BuildContext context, Map<String, dynamic> json, ListenerCall listener) => Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(title),
@@ -163,20 +163,20 @@ Distributed under the **MIT** License. See [LICENSE](./LICENSE) for more informa
 
 Lenra - [@lenra_dev](https://twitter.com/lenra_dev) - contact@lenra.io
 
-Project Link: [https://github.com/lenra-io/template-javascript](https://github.com/lenra-io/template-javascript)
+Project Link: [https://github.com/lenra-io/client-lib-flutter](https://github.com/lenra-io/client-lib-flutter)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/lenra-io/template-javascript.svg?style=for-the-badge
-[contributors-url]: https://github.com/lenra-io/template-javascript/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/lenra-io/template-javascript.svg?style=for-the-badge
-[forks-url]: https://github.com/lenra-io/template-javascript/network/members
-[stars-shield]: https://img.shields.io/github/stars/lenra-io/template-javascript.svg?style=for-the-badge
-[stars-url]: https://github.com/lenra-io/template-javascript/stargazers
-[issues-shield]: https://img.shields.io/github/issues/lenra-io/template-javascript.svg?style=for-the-badge
-[issues-url]: https://github.com/lenra-io/template-javascript/issues
-[license-shield]: https://img.shields.io/github/license/lenra-io/template-javascript.svg?style=for-the-badge
-[license-url]: https://github.com/lenra-io/template-javascript/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[contributors-url]: https://github.com/lenra-io/client-lib-flutter/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[forks-url]: https://github.com/lenra-io/client-lib-flutter/network/members
+[stars-shield]: https://img.shields.io/github/stars/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[stars-url]: https://github.com/lenra-io/client-lib-flutter/stargazers
+[issues-shield]: https://img.shields.io/github/issues/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[issues-url]: https://github.com/lenra-io/client-lib-flutter/issues
+[license-shield]: https://img.shields.io/github/license/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[license-url]: https://github.com/lenra-io/client-lib-flutter/blob/master/LICENSE

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:lenra_client/lenra_client.dart';
+import 'package:lenra_client/widgets.dart';
 
 void main() {
   runApp(const MyApp());
