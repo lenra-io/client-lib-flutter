@@ -1,7 +1,7 @@
 import 'package:lenra_client/socket.dart';
 import 'package:json_patch/json_patch.dart';
 import 'package:logging/logging.dart';
-import 'package:phoenix_wings/html.dart';
+import 'package:phoenix_wings/phoenix_wings.dart';
 
 class LenraRoute {
   static final log = Logger('LenraRoute');
