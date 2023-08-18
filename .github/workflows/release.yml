@@ -21,7 +21,7 @@ jobs:
     uses: lenra-io/github-actions/.github/workflows/release.yml@main
   publish:
     name: publish
-    needs: [get-next-version]
+    needs: [get-next-version, release]
     if: ${{ needs.get-next-version.outputs.will-release == 'true' }}
     runs-on: ubuntu-latest
     env:
@@ -31,8 +31,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1
-      - name: Setup yq
-        uses: shiipou/setup-yq-action@v2.0.2
       - name: Set version
         uses: mikefarah/yq@master
         with:
