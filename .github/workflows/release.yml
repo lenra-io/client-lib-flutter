@@ -1,0 +1,14 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+      - rc
+      - beta
+      - alpha
+      - "*.x"
+
+jobs:
+    
+  release:
+    uses: lenra-io/github-actions/.github/workflows/release.yml@main
