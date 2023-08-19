@@ -1,5 +1,5 @@
 name: lenra_client
-description: Official Lenra lib to create custom client apps in Flutter.
+description: Create your Flutter application with a Lenra backend. Add a LenraApplication at the base of your app and you can use the LenraView widget in your app.
 version: 0.0.0-dev.1
 homepage: https://www.lenra.io
 environment:
