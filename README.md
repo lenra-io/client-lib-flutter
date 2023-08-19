@@ -21,7 +21,7 @@
 <h3 align="center">Lenra's Flutter client lib</h3>
 
   <p align="center">
-    This lib provides just enough to get started creating your application with lenra backend.
+    Let you create your Flutter application with Lenra backend.
     <br />
     <br />
     <a href="https://github.com/lenra-io/client-lib-flutter/issues">Report Bug</a>
