@@ -30,10 +30,6 @@ jobs:
       id-token: write # Required for authentication using OIDC
     steps:
       - uses: actions/checkout@v3
-      - name: Set version
-        uses: mikefarah/yq@master
-        with:
-          cmd: yq -i '.version="${{ env.VERSION }}"' pubspec.yaml
       - uses: dart-lang/setup-dart@v1
       - name: Cache Flutter dependencies
         uses: actions/cache@v2
@@ -52,5 +48,9 @@ jobs:
           echo '${{ secrets.PUB_DEV_GCLOUD_KEY }}' > .github/key-file.json
           gcloud auth activate-service-account --key-file=.github/key-file.json
           gcloud auth print-identity-token --audiences=https://pub.dev | dart pub token add https://pub.dev
+      - name: Set version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.version="${{ env.VERSION }}"' pubspec.yaml
       - name: Publish
         run: flutter pub publish --force
