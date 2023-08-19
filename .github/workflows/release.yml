@@ -1,0 +1,56 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+      - rc
+      - beta
+      - alpha
+      - "*.x"
+
+env:
+  flutter_version: "3.13.0"
+
+jobs:
+  get-next-version:
+    uses: lenra-io/github-actions/.github/workflows/get-version.yml@main
+    
+  release:
+    needs: [get-next-version]
+    if: ${{ needs.get-next-version.outputs.will-release == 'true' }}
+    uses: lenra-io/github-actions/.github/workflows/release.yml@main
+  publish:
+    name: publish
+    needs: [get-next-version, release]
+    if: ${{ needs.get-next-version.outputs.will-release == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-next-version.outputs.version }}
+    permissions:
+      id-token: write # Required for authentication using OIDC
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.version="${{ env.VERSION }}"' pubspec.yaml
+      - uses: dart-lang/setup-dart@v1
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
+      - name: Install dependencies
+        run: flutter pub get
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: 'GCloud auth'
+        run: |
+          echo '${{ secrets.PUB_DEV_GCLOUD_KEY }}' > .github/key-file.json
+          gcloud auth activate-service-account --key-file=.github/key-file.json
+          gcloud auth print-identity-token --audiences=https://pub.dev | dart pub token add https://pub.dev
+      - name: Publish
+        run: flutter pub publish --force

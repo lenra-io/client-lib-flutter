@@ -18,15 +18,15 @@
 <br />
 <div align="center">
 
-<h3 align="center">Template Javascript</h3>
+<h3 align="center">Lenra's Flutter client lib</h3>
 
   <p align="center">
-    This template provides just enough to get started with your Javascript application.
+    This lib provides just enough to get started creating your application with lenra backend.
     <br />
     <br />
-    <a href="https://github.com/lenra-io/template-javascript/issues">Report Bug</a>
+    <a href="https://github.com/lenra-io/client-lib-flutter/issues">Report Bug</a>
     ·
-    <a href="https://github.com/lenra-io/template-javascript/issues">Request Feature</a>
+    <a href="https://github.com/lenra-io/client-lib-flutter/issues">Request Feature</a>
   </p>
 </div>
 
@@ -37,8 +37,14 @@
 
 ## Prerequisites
 
-To properly run this template, you will have to make sure that the Lenra CLI and docker with docker-compose are installed on your computer.
-Installation instructions can be found here https://github.com/lenra-io/lenra_cli.
+Add the dependency to your project:
+
+```console
+flutter pub add lenra_client
+```
+
+You might need some other prerequisites since this lib is still in using [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage).
+Look at this lib documentation to see what you need.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -46,14 +52,88 @@ Installation instructions can be found here https://github.com/lenra-io/lenra_cl
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-To run the Javascript template just run:
-```console
-lenra dev
+Add a `LenraApplication` to your app:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:lenra_client/widgets.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: LenraApplication(
+        appName: 'Example Client',
+        // set your own client id for production
+        clientId: 'XXX-XXX-XXX',
+        child: const MyHomePage(title: 'Flutter Demo Home Page'),
+      ),
+    );
+  }
+}
 ```
 
-You can then access the application by opening [`localhost:4000`](http://localhost:4000) on your web browser. 
+This while automatically start the authentication flow.
 
-This template is a basic implementation of a Lenra application using the Javascript language. You can get your application started by using this template.
+You can then add `LenraView` instances to your widget tree to link the widget to a Lenra view and use it data:
+
+```dart
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return LenraView(
+      route: "/counter/me",
+      builder: (
+        BuildContext context,
+        Map<String, dynamic> json,
+        ListenerCaller callListener,
+      ) =>
+          Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '${json["value"]}',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => callListener(json["onIncrement"]),
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      loader: const CircularProgressIndicator(),
+    );
+  }
+}
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -84,20 +164,20 @@ Distributed under the **MIT** License. See [LICENSE](./LICENSE) for more informa
 
 Lenra - [@lenra_dev](https://twitter.com/lenra_dev) - contact@lenra.io
 
-Project Link: [https://github.com/lenra-io/template-javascript](https://github.com/lenra-io/template-javascript)
+Project Link: [https://github.com/lenra-io/client-lib-flutter](https://github.com/lenra-io/client-lib-flutter)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/lenra-io/template-javascript.svg?style=for-the-badge
-[contributors-url]: https://github.com/lenra-io/template-javascript/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/lenra-io/template-javascript.svg?style=for-the-badge
-[forks-url]: https://github.com/lenra-io/template-javascript/network/members
-[stars-shield]: https://img.shields.io/github/stars/lenra-io/template-javascript.svg?style=for-the-badge
-[stars-url]: https://github.com/lenra-io/template-javascript/stargazers
-[issues-shield]: https://img.shields.io/github/issues/lenra-io/template-javascript.svg?style=for-the-badge
-[issues-url]: https://github.com/lenra-io/template-javascript/issues
-[license-shield]: https://img.shields.io/github/license/lenra-io/template-javascript.svg?style=for-the-badge
-[license-url]: https://github.com/lenra-io/template-javascript/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[contributors-url]: https://github.com/lenra-io/client-lib-flutter/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[forks-url]: https://github.com/lenra-io/client-lib-flutter/network/members
+[stars-shield]: https://img.shields.io/github/stars/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[stars-url]: https://github.com/lenra-io/client-lib-flutter/stargazers
+[issues-shield]: https://img.shields.io/github/issues/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[issues-url]: https://github.com/lenra-io/client-lib-flutter/issues
+[license-shield]: https://img.shields.io/github/license/lenra-io/client-lib-flutter.svg?style=for-the-badge
+[license-url]: https://github.com/lenra-io/client-lib-flutter/blob/master/LICENSE
