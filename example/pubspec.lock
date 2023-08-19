@@ -187,10 +187,10 @@ packages:
   lenra_client:
     dependency: "direct main"
     description:
-      path: "../.."
+      path: ".."
       relative: true
     source: path
-    version: "0.0.0"
+    version: "0.0.0-dev.1"
   lints:
     dependency: transitive
     description:
