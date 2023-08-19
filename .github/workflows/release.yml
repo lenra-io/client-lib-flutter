@@ -49,8 +49,8 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v1'
       - name: 'GCloud auth'
         run: |
-          echo '${{ secrets.PUB_DEV_GCLOUD_KEY }}' > key-file.json
-          gcloud auth activate-service-account --key-file=key-file.json
+          echo '${{ secrets.PUB_DEV_GCLOUD_KEY }}' > .github/key-file.json
+          gcloud auth activate-service-account --key-file=.github/key-file.json
           gcloud auth print-identity-token --audiences=https://pub.dev | dart pub token add https://pub.dev
       - name: Publish
         # run: flutter pub publish --force
