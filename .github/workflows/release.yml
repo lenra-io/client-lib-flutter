@@ -53,5 +53,4 @@ jobs:
           gcloud auth activate-service-account --key-file=.github/key-file.json
           gcloud auth print-identity-token --audiences=https://pub.dev | dart pub token add https://pub.dev
       - name: Publish
-        # run: flutter pub publish --force
-        run: flutter pub publish --dry-run
+        run: flutter pub publish --force
