@@ -6,7 +6,7 @@ import { View } from "@lenra/components";
 export const lenraRoutes = [
   {
     path: "/",
-    view: views.main
+    view: View(views.main)
   }
 ]
 

@@ -44,6 +44,8 @@ class _SocketManagerState extends State<SocketManager> {
       params,
     );
 
+    socket.onError((error) => throw error);
+
     socket.connect();
   }
 

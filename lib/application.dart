@@ -55,7 +55,7 @@ class LenraApplication extends StatelessWidget {
     this.androidApplicaionId = 'com.example.client',
     this.socketEndpoint = kDebugMode
         ? "ws://localhost:4001/socket/websocket"
-        : "https://api.lenra.io/socket/websocket",
+        : "wss://api.lenra.io/socket/websocket",
     this.oauthBaseUri =
         kDebugMode ? "http://localhost:4444" : "https://auth.lenra.io",
     this.oauthRedirectPath = "/redirect.html",
