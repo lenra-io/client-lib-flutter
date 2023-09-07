@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
@@ -78,4 +79,26 @@ String getPlatformRedirectUri({
   }
 
   return "http://localhost:$oauthRedirectPort$oauthRedirectPath";
+}
+
+class LenraOauth2 extends InheritedWidget {
+  final LenraOauth2Helper helper;
+
+  const LenraOauth2({super.key, required super.child, required this.helper});
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    if (oldWidget is! LenraOauth2) return true;
+    return oldWidget.helper != helper;
+  }
+
+  static LenraOauth2? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<LenraOauth2>();
+  }
+
+  static LenraOauth2 of(BuildContext context) {
+    final LenraOauth2? result = maybeOf(context);
+    assert(result != null, 'No LenraApp found in context');
+    return result!;
+  }
 }
