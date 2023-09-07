@@ -115,24 +115,27 @@ class _LenraApplicationState extends State<LenraApplication> {
   @override
   Widget build(BuildContext context) {
     if (isLogging) {
-      return FutureBuilder(
-        future: oauth2.getToken(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Text('Error ${snapshot.error}');
-            }
+      return LenraOauth2(
+        helper: oauth2,
+        child: FutureBuilder(
+          future: oauth2.getToken(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return Text('Error ${snapshot.error}');
+              }
 
-            return SocketManager(
-              appName: widget.appName,
-              endpoint: widget.socketEndpoint,
-              token: snapshot.data as AccessTokenResponse,
-              child: widget.child,
-            );
-          } else {
-            return widget.loader ?? defaultLoader;
-          }
-        },
+              return SocketManager(
+                appName: widget.appName,
+                endpoint: widget.socketEndpoint,
+                token: snapshot.data as AccessTokenResponse,
+                child: widget.child,
+              );
+            } else {
+              return widget.loader ?? defaultLoader;
+            }
+          },
+        ),
       );
     } else {
       return widget.loginWidgetBuilder!(context, () {
