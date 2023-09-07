@@ -1,15 +1,27 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:core';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lenra_client/oauth2.dart';
 import 'package:lenra_client/socket.dart';
 import 'package:oauth2_client/access_token_response.dart';
 
+const defaultLoader = Center(child: CircularProgressIndicator());
+
+typedef LoginWidgetBuilder = Widget Function(BuildContext, VoidCallback);
+
 /// A widget that handles the Lenra OAuth2 authentication flow.
-class LenraApplication extends StatelessWidget {
+class LenraApplication extends StatefulWidget {
   /// The UI to show after the authentication flow.
   final Widget child;
+
+  /// The UI to show during the authentication flow.
+  final Widget? loader;
+
+  /// The UI to show after the authentication flow.
+  final LoginWidgetBuilder? loginWidgetBuilder;
 
   /// The lenra instance's OAuth base URI.
   /// Defaults to `http://localhost:4444` in debug mode and `https://auth.lenra.io` in release mode.
@@ -62,47 +74,72 @@ class LenraApplication extends StatelessWidget {
     int? oauthRedirectPort,
     this.scopes = const ["app:websocket"],
     this.clientSecret,
+    this.loader,
+    this.loginWidgetBuilder,
   }) {
     this.oauthRedirectPort =
         oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
   }
 
   @override
-  Widget build(BuildContext context) {
-    LenraOauth2Client oauth2 = LenraOauth2Client(
-      baseUri: oauthBaseUri,
+  State<LenraApplication> createState() => _LenraApplicationState();
+}
+
+class _LenraApplicationState extends State<LenraApplication> {
+  late LenraOauth2Helper oauth2;
+  bool isLogging = false;
+
+  @override
+  void initState() {
+    super.initState();
+    oauth2 = LenraOauth2Helper(
+      baseUri: widget.oauthBaseUri,
       redirectUri: getPlatformRedirectUri(
-        androidApplicationId: androidApplicaionId,
-        oauthRedirectPort: oauthRedirectPort,
-        oauthRedirectPath: oauthRedirectPath,
+        androidApplicationId: widget.androidApplicaionId,
+        oauthRedirectPort: widget.oauthRedirectPort,
+        oauthRedirectPath: widget.oauthRedirectPath,
       ),
-      clientId: clientId,
-      clientSecret: clientSecret,
+      clientId: widget.clientId,
+      clientSecret: widget.clientSecret,
       customUriScheme: getPlatformCustomUriScheme(
-        androidApplicationId: androidApplicaionId,
-        oauthRedirectPort: oauthRedirectPort,
+        androidApplicationId: widget.androidApplicaionId,
+        oauthRedirectPort: widget.oauthRedirectPort,
       ),
-      scopes: scopes,
+      scopes: widget.scopes,
     );
+    if (widget.loginWidgetBuilder == null) {
+      isLogging = true;
+    }
+  }
 
-    return FutureBuilder(
-      future: oauth2.refreshToken(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Text('Error ${snapshot.error}');
+  @override
+  Widget build(BuildContext context) {
+    if (isLogging) {
+      return FutureBuilder(
+        future: oauth2.getToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Text('Error ${snapshot.error}');
+            }
+
+            return SocketManager(
+              appName: widget.appName,
+              endpoint: widget.socketEndpoint,
+              token: snapshot.data as AccessTokenResponse,
+              child: widget.child,
+            );
+          } else {
+            return widget.loader ?? defaultLoader;
           }
-
-          return SocketManager(
-            appName: appName,
-            endpoint: socketEndpoint,
-            token: snapshot.data as AccessTokenResponse,
-            child: child,
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
+        },
+      );
+    } else {
+      return widget.loginWidgetBuilder!(context, () {
+        setState(() {
+          isLogging = true;
+        });
+      });
+    }
   }
 }

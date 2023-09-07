@@ -4,34 +4,45 @@ import 'package:oauth2_client/oauth2_client.dart';
 import 'package:oauth2_client/oauth2_helper.dart';
 
 /// A class that represents a Lenra OAuth2 client.
-class LenraOauth2Client {
-  late OAuth2Helper helper;
-
+class LenraOauth2Helper extends OAuth2Helper {
   /// Creates the helper usable to refresh the OAuth2 token.
-  LenraOauth2Client({
+  LenraOauth2Helper({
     required String baseUri,
     required String redirectUri,
     required String clientId,
     required String customUriScheme,
     String? clientSecret,
     List<String> scopes = const [],
-  }) {
-    helper = OAuth2Helper(
-      OAuth2Client(
-          authorizeUrl: '$baseUri/oauth2/auth',
-          tokenUrl: '$baseUri/oauth2/token',
-          revokeUrl: '$baseUri/oauth2/revoke',
-          redirectUri: redirectUri,
-          customUriScheme: customUriScheme),
-      grantType: OAuth2Helper.authorizationCode,
-      clientId: clientId,
-      clientSecret: clientSecret,
-      scopes: scopes,
-    );
-  }
+  }) : super(
+          OAuth2Client(
+              authorizeUrl: '$baseUri/oauth2/auth',
+              tokenUrl: '$baseUri/oauth2/token',
+              revokeUrl: '$baseUri/oauth2/revoke',
+              redirectUri: redirectUri,
+              customUriScheme: customUriScheme),
+          grantType: OAuth2Helper.authorizationCode,
+          clientId: clientId,
+          clientSecret: clientSecret,
+          scopes: scopes,
+        );
 
-  /// Refreshes the OAuth2 token.
-  Future<AccessTokenResponse?> refreshToken() async => await helper.getToken();
+  Future<bool> isAuthenticated() async {
+    AccessTokenResponse? tknResp = await getTokenFromStorage();
+
+    if (tknResp != null) {
+      if (tknResp.refreshNeeded()) {
+        //The access token is expired
+        if (tknResp.hasRefreshToken()) {
+          tknResp = await refreshToken(tknResp);
+        } else {
+          //No refresh token, fetch a new token
+          return false;
+        }
+      }
+      return tknResp.isValid();
+    }
+    return false;
+  }
 }
 
 /// Get the custom uri scheme of the app for the current plateform.

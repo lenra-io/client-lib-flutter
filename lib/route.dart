@@ -6,12 +6,20 @@ import 'package:phoenix_wings/phoenix_wings.dart';
 class LenraRoute {
   static final log = Logger('LenraRoute');
 
+  LenraSocket lenraSocket;
   Map<String, dynamic>? json;
   String route;
   void Function(Map<String, dynamic>) onChange;
   late PhoenixChannel channel;
 
-  LenraRoute(LenraSocket lenraSocket, this.route, this.onChange) {
+  LenraRoute(this.lenraSocket, this.route, this.onChange) {
+    _openRouteChannel();
+  }
+
+  void _openRouteChannel() async {
+    if (!lenraSocket.socket.isConnected) {
+      await lenraSocket.socket.connect();
+    }
     log.info("Join channel $route with app $lenraSocket");
     channel = lenraSocket.socket.channel("route:$route", {"mode": "json"});
 

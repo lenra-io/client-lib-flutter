@@ -18,10 +18,18 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LenraApplication(
-        appName: 'Example Client',
-        clientId: 'XXX-XXX-XXX',
-        child: const MyHomePage(title: 'Flutter Demo Home Page'),
-      ),
+          appName: 'Example Client',
+          clientId: 'XXX-XXX-XXX',
+          child: const MyHomePage(title: 'Flutter Demo Home Page'),
+          loginWidgetBuilder: (BuildContext context, VoidCallback login) =>
+              Scaffold(
+                body: Center(
+                  child: TextButton(
+                    onPressed: login,
+                    child: const Text("Login"),
+                  ),
+                ),
+              )),
     );
   }
 }
@@ -65,7 +73,9 @@ class MyHomePage extends StatelessWidget {
           child: const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      loader: const CircularProgressIndicator(),
+      loader: const Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
