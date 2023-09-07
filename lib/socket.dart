@@ -31,10 +31,10 @@ class _SocketManagerState extends State<SocketManager> {
   @override
   void initState() {
     super.initState();
-    openSocket();
+    createSocket();
   }
 
-  void openSocket() {
+  void createSocket() {
     Map<String, String> params = {
       "app": widget.appName,
       "token": widget.token.accessToken!,
@@ -45,8 +45,6 @@ class _SocketManagerState extends State<SocketManager> {
     );
 
     socket.onError((error) => throw error);
-
-    socket.connect();
   }
 
   @override
