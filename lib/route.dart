@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:lenra_client/socket.dart';
 import 'package:json_patch/json_patch.dart';
 import 'package:logging/logging.dart';
@@ -44,8 +46,19 @@ class LenraRoute {
         .receive("error", (response) => log.info("Unable to join $route"));
   }
 
-  void callListener(Map<String, dynamic> action) {
-    channel.push(event: "run", payload: action);
+  Future<void> callListener(Map<String, dynamic> action) {
+    var completer = new Completer<void>();
+
+    channel
+        .push(event: "run", payload: action)
+        ?.receive("ok", (response) => completer.complete())
+        .receive(
+          "error",
+          (response) => completer
+              .completeError("An error occured while calling the listener"),
+        );
+
+    return completer.future;
   }
 
   void close() {

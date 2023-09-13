@@ -135,6 +135,14 @@ class MyHomePage extends StatelessWidget {
 }
 ```
 
+For the web target, you also have to add the following JavaScript to a redirect file (default to `redirect.html`) to handle OAuth2 redirection (see the [example](./example/web/redirect.html)):
+
+```javascript
+window.onload = function() {
+  window.opener.postMessage(window.location.href, `${window.location.protocol}//${window.location.host}`);
+}
+```
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
