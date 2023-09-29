@@ -18,7 +18,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LenraApplication(
-          appName: 'Example Client',
           clientId: 'XXX-XXX-XXX',
           child: const MyHomePage(title: 'Flutter Demo Home Page'),
           loginWidgetBuilder: (BuildContext context, VoidCallback login) =>
