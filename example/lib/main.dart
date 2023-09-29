@@ -34,10 +34,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
+
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage> {
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +58,7 @@ class MyHomePage extends StatelessWidget {
           Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(title),
+          title: Text(widget.title),
         ),
         body: Center(
           child: Column(
@@ -68,11 +75,24 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => callListener(
-              (json["onIncrement"] as Map<String, dynamic>)
-                ..["event"] = {"value": "custom value"}),
+          onPressed: () {
+            setState(() {
+              _loading = true;
+            });
+            callListener(json["onIncrement"] as Map<String, dynamic>
+                  ..["event"] = {"value": "custom value"})
+                .then((_) {
+              setState(() {
+                _loading = false;
+              });
+            });
+          },
           tooltip: 'Increment',
-          child: const Icon(Icons.add),
+          child: _loading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
       loader: const Center(
