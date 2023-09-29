@@ -68,7 +68,9 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => callListener(json["onIncrement"]),
+          onPressed: () => callListener(
+              (json["onIncrement"] as Map<String, dynamic>)
+                ..["event"] = {"value": "custom value"}),
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
