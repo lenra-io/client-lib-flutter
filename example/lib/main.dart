@@ -79,8 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               _loading = true;
             });
-            callListener(json["onIncrement"] as Map<String, dynamic>)
-                ..["event"] = {"value": "custom value"}).then((_) {
+            callListener(json["onIncrement"] as Map<String, dynamic>
+                  ..["event"] = {"value": "custom value"})
+                .then((_) {
               setState(() {
                 _loading = false;
               });
