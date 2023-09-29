@@ -47,7 +47,7 @@ class LenraRoute {
   }
 
   Future<void> callListener(Map<String, dynamic> action) {
-    var completer = new Completer<void>();
+    var completer = Completer<void>();
 
     channel
         .push(event: "run", payload: action)
