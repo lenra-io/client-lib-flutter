@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lenra_client/socket.dart';
 import 'package:lenra_client/route.dart';
 
-typedef ListenerCaller = Function(Map<String, dynamic>);
+typedef ListenerCaller = Future<void> Function(Map<String, dynamic>);
 typedef LenraViewBuilder = Widget Function(
     BuildContext, Map<String, dynamic>, ListenerCaller);
 
