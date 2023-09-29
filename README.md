@@ -75,7 +75,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LenraApplication(
-        appName: 'Example Client',
         // set your own client id for production
         clientId: 'XXX-XXX-XXX',
         child: const MyHomePage(title: 'Flutter Demo Home Page'),

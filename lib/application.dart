@@ -36,7 +36,7 @@ class LenraApplication extends StatefulWidget {
   late int oauthRedirectPort;
 
   /// The name of the application.
-  final String appName;
+  final String? appName;
 
   /// The OAuth2 client ID.
   final String clientId;
@@ -61,9 +61,9 @@ class LenraApplication extends StatefulWidget {
   /// Creates a new instance of [LenraOauth2Widget].
   LenraApplication({
     super.key,
-    required this.appName,
     required this.clientId,
     required this.child,
+    this.appName,
     this.androidApplicaionId = 'com.example.client',
     this.socketEndpoint = kDebugMode
         ? "ws://localhost:4001/socket/websocket"

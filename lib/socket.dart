@@ -6,17 +6,17 @@ import 'package:oauth2_client/access_token_response.dart';
 import 'package:phoenix_wings/phoenix_wings.dart';
 
 class SocketManager extends StatefulWidget {
-  final String appName;
+  final String? appName;
   final String endpoint;
   final Widget child;
   final AccessTokenResponse token;
 
   const SocketManager({
     Key? key,
-    required this.appName,
     required this.endpoint,
     required this.child,
     required this.token,
+    this.appName,
   }) : super(key: key);
 
   @override
@@ -36,9 +36,11 @@ class _SocketManagerState extends State<SocketManager> {
 
   void createSocket() {
     Map<String, String> params = {
-      "app": widget.appName,
       "token": widget.token.accessToken!,
     };
+    if (widget.appName != null) {
+      params["app"] = widget.appName!;
+    }
     socket = createPhoenixSocket(
       widget.endpoint,
       params,
