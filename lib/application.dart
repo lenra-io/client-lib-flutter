@@ -87,6 +87,7 @@ class LenraApplication extends StatefulWidget {
 
 class _LenraApplicationState extends State<LenraApplication> {
   late LenraOauth2Helper oauth2;
+  bool gettingLocalToken = true;
   bool isLogging = false;
 
   @override
@@ -109,6 +110,14 @@ class _LenraApplicationState extends State<LenraApplication> {
     );
     if (widget.loginWidgetBuilder == null) {
       isLogging = true;
+    } else {
+      gettingLocalToken = true;
+      oauth2.getTokenFromStorage().then((token) {
+        setState(() {
+          gettingLocalToken = false;
+          isLogging = token != null;
+        });
+      });
     }
   }
 
@@ -124,7 +133,6 @@ class _LenraApplicationState extends State<LenraApplication> {
               if (snapshot.hasError) {
                 return Text('Error ${snapshot.error}');
               }
-
               return SocketManager(
                 appName: widget.appName,
                 endpoint: widget.socketEndpoint,
@@ -137,6 +145,8 @@ class _LenraApplicationState extends State<LenraApplication> {
           },
         ),
       );
+    } else if (gettingLocalToken) {
+      return widget.loader ?? defaultLoader;
     } else {
       return widget.loginWidgetBuilder!(context, () {
         setState(() {
