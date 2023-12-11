@@ -57,7 +57,7 @@ String getPlatformCustomUriScheme({
         defaultTargetPlatform == TargetPlatform.linux) {
       // Apparently the customUriScheme should be the full uri for Windows and Linux for oauth2_client to work properly
       return "http://localhost:$oauthRedirectPort";
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
+    } else if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
       return androidApplicationId;
     }
   }
@@ -74,7 +74,7 @@ String getPlatformRedirectUri({
   if (kIsWeb) {
     return "${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}$oauthRedirectPath";
   }
-  if (defaultTargetPlatform == TargetPlatform.android) {
+  if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
     return "$androidApplicationId://";
   }
 
