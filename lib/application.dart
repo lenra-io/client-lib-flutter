@@ -96,14 +96,14 @@ class _LenraApplicationState extends State<LenraApplication> {
     oauth2 = LenraOauth2Helper(
       baseUri: widget.oauthBaseUri,
       redirectUri: getPlatformRedirectUri(
-        androidApplicationId: widget.androidApplicaionId,
+        applicationId: widget.androidApplicaionId,
         oauthRedirectPort: widget.oauthRedirectPort,
         oauthRedirectPath: widget.oauthRedirectPath,
       ),
       clientId: widget.clientId,
       clientSecret: widget.clientSecret,
       customUriScheme: getPlatformCustomUriScheme(
-        androidApplicationId: widget.androidApplicaionId,
+        applicationId: widget.androidApplicaionId,
         oauthRedirectPort: widget.oauthRedirectPort,
       ),
       scopes: widget.scopes,

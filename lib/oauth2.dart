@@ -50,7 +50,7 @@ const defaultApplicationId = "com.example.app";
 
 /// Get the custom uri scheme of the app for the current platform.
 String getPlatformCustomUriScheme({
-  @Deprecated("Use applicationId instead.") String androidApplicationId = defaultApplicationId,
+  @Deprecated("Use 'applicationId' instead.") String androidApplicationId = defaultApplicationId,
   String applicationId = defaultApplicationId,
   int oauthRedirectPort = 10000,
 }) {
@@ -73,7 +73,7 @@ String getPlatformCustomUriScheme({
 
 /// Get the custom uri scheme of the app for the current platform.
 String getPlatformRedirectUri({
-  @Deprecated("Use applicationId instead") String androidApplicationId = defaultApplicationId,
+  @Deprecated("Use 'applicationId' instead") String androidApplicationId = defaultApplicationId,
   String applicationId = defaultApplicationId,
   int oauthRedirectPort = 10000,
   String oauthRedirectPath = "/redirect.html",
