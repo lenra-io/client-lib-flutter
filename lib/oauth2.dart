@@ -46,27 +46,35 @@ class LenraOauth2Helper extends OAuth2Helper {
   }
 }
 
-/// Get the custom uri scheme of the app for the current plateform.
+const defaultApplicationId = "com.example.app";
+
+/// Get the custom uri scheme of the app for the current platform.
 String getPlatformCustomUriScheme({
-  String androidApplicationId = "com.example.app",
+  @Deprecated("Use applicationId instead.") String androidApplicationId = defaultApplicationId,
+  String applicationId = defaultApplicationId,
   int oauthRedirectPort = 10000,
 }) {
   // It is important to check for web first because web is also returning the TargetPlatform of the device.
   if (!kIsWeb) {
-    if (defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.linux) {
+    if (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux) {
       // Apparently the customUriScheme should be the full uri for Windows and Linux for oauth2_client to work properly
       return "http://localhost:$oauthRedirectPort";
     } else if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
-      return androidApplicationId;
+      // If androidApplicationId has been set to something different from its default value, use it instead of applicationId. (deprecation handling)
+      if (androidApplicationId != defaultApplicationId) {
+        return androidApplicationId;
+      }
+
+      return applicationId;
     }
   }
   return "http";
 }
 
-/// Get the custom uri scheme of the app for the current plateform.
+/// Get the custom uri scheme of the app for the current platform.
 String getPlatformRedirectUri({
-  String androidApplicationId = "com.example.app",
+  @Deprecated("Use applicationId instead") String androidApplicationId = defaultApplicationId,
+  String applicationId = defaultApplicationId,
   int oauthRedirectPort = 10000,
   String oauthRedirectPath = "/redirect.html",
 }) {
@@ -75,7 +83,12 @@ String getPlatformRedirectUri({
     return "${Uri.base.scheme}://${Uri.base.host}:${Uri.base.port}$oauthRedirectPath";
   }
   if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
-    return "$androidApplicationId://";
+    // If androidApplicationId has been set to something different from its default value, use it instead of applicationId. (deprecation handling)
+    if (androidApplicationId != defaultApplicationId) {
+      return "$androidApplicationId://";
+    }
+
+    return "$applicationId://";
   }
 
   return "http://localhost:$oauthRedirectPort$oauthRedirectPath";
