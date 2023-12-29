@@ -48,7 +48,7 @@ class LenraApplication extends StatefulWidget {
 
   /// The Android application id.
   /// Not needed if you don't create an Android app.
-  final String androidApplicaionId;
+  late String applicaionId;
 
   /// The OAuth2 scopes.
   /// Defaults to `["app:websocket"]`
@@ -64,7 +64,8 @@ class LenraApplication extends StatefulWidget {
     required this.clientId,
     required this.child,
     this.appName,
-    this.androidApplicaionId = 'com.example.client',
+    String? applicaionId,
+    @Deprecated("Use 'applicaionId' instead.") String? androidApplicaionId,
     this.socketEndpoint = kDebugMode
         ? "ws://localhost:4001/socket/websocket"
         : "wss://api.lenra.io/socket/websocket",
@@ -79,6 +80,8 @@ class LenraApplication extends StatefulWidget {
   }) {
     this.oauthRedirectPort =
         oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
+    this.applicaionId =
+        applicaionId ?? androidApplicaionId ?? defaultApplicationId;
   }
 
   @override
@@ -96,14 +99,14 @@ class _LenraApplicationState extends State<LenraApplication> {
     oauth2 = LenraOauth2Helper(
       baseUri: widget.oauthBaseUri,
       redirectUri: getPlatformRedirectUri(
-        androidApplicationId: widget.androidApplicaionId,
+        applicationId: widget.applicaionId,
         oauthRedirectPort: widget.oauthRedirectPort,
         oauthRedirectPath: widget.oauthRedirectPath,
       ),
       clientId: widget.clientId,
       clientSecret: widget.clientSecret,
       customUriScheme: getPlatformCustomUriScheme(
-        androidApplicationId: widget.androidApplicaionId,
+        applicationId: widget.applicaionId,
         oauthRedirectPort: widget.oauthRedirectPort,
       ),
       scopes: widget.scopes,
