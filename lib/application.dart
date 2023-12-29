@@ -58,6 +58,9 @@ class LenraApplication extends StatefulWidget {
   /// Defaults to `ws://localhost:4001/socket/websocket` in debug mode and `https://api.lenra.io/socket/websocket` in release mode.
   final String socketEndpoint;
 
+  /// The OAuth2 helper for customizing OAuth configuration.
+  final LenraOauth2Helper? oauth2helper;
+
   /// Creates a new instance of [LenraOauth2Widget].
   LenraApplication({
     super.key,
@@ -77,6 +80,7 @@ class LenraApplication extends StatefulWidget {
     this.clientSecret,
     this.loader,
     this.loginWidgetBuilder,
+    this.oauth2helper,
   }) {
     this.oauthRedirectPort =
         oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
@@ -96,21 +100,22 @@ class _LenraApplicationState extends State<LenraApplication> {
   @override
   void initState() {
     super.initState();
-    oauth2 = LenraOauth2Helper(
-      baseUri: widget.oauthBaseUri,
-      redirectUri: getPlatformRedirectUri(
-        applicationId: widget.applicaionId,
-        oauthRedirectPort: widget.oauthRedirectPort,
-        oauthRedirectPath: widget.oauthRedirectPath,
-      ),
-      clientId: widget.clientId,
-      clientSecret: widget.clientSecret,
-      customUriScheme: getPlatformCustomUriScheme(
-        applicationId: widget.applicaionId,
-        oauthRedirectPort: widget.oauthRedirectPort,
-      ),
-      scopes: widget.scopes,
-    );
+    oauth2 = widget.oauth2helper ??
+        LenraOauth2Helper(
+          baseUri: widget.oauthBaseUri,
+          redirectUri: getPlatformRedirectUri(
+            applicationId: widget.applicaionId,
+            oauthRedirectPort: widget.oauthRedirectPort,
+            oauthRedirectPath: widget.oauthRedirectPath,
+          ),
+          clientId: widget.clientId,
+          clientSecret: widget.clientSecret,
+          customUriScheme: getPlatformCustomUriScheme(
+            applicationId: widget.applicaionId,
+            oauthRedirectPort: widget.oauthRedirectPort,
+          ),
+          scopes: widget.scopes,
+        );
     if (widget.loginWidgetBuilder == null) {
       isLogging = true;
     } else {
