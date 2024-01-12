@@ -51,15 +51,19 @@ class _SocketManagerState extends State<SocketManager> {
 
     socket.onOpen(() {
       print("Socket opened");
-      setState(() {
-        connected = true;
-      });
+      if (mounted) {
+        setState(() {
+          connected = true;
+        });
+      }
     });
     socket.onClose((_) {
       print("Socket closed");
-      setState(() {
-        connected = false;
-      });
+      if (mounted) {
+        setState(() {
+          connected = false;
+        });
+      }
     });
     socket.onError((error) {
       print("Socket error: $error");
