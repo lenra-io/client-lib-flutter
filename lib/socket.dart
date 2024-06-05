@@ -50,7 +50,6 @@ class _SocketManagerState extends State<SocketManager> {
     );
 
     socket.onOpen(() {
-      print("Socket opened");
       if (mounted) {
         setState(() {
           connected = true;
@@ -58,7 +57,6 @@ class _SocketManagerState extends State<SocketManager> {
       }
     });
     socket.onClose((_) {
-      print("Socket closed");
       if (mounted) {
         setState(() {
           connected = false;
@@ -66,7 +64,6 @@ class _SocketManagerState extends State<SocketManager> {
       }
     });
     socket.onError((error) {
-      print("Socket error: $error");
       throw error;
     });
     if (widget.autoConnect) {
@@ -78,8 +75,8 @@ class _SocketManagerState extends State<SocketManager> {
   Widget build(BuildContext context) {
     return LenraSocket(
       socket: socket,
-      child: widget.child,
       connected: connected,
+      child: widget.child,
     );
   }
 
