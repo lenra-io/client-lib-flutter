@@ -49,7 +49,7 @@ class LenraApplication extends StatefulWidget {
 
   /// The Android application id.
   /// Not needed if you don't create an Android app.
-  late String applicaionId;
+  late String applicationId;
 
   /// The OAuth2 scopes.
   /// Defaults to `["app:websocket"]`
@@ -71,8 +71,8 @@ class LenraApplication extends StatefulWidget {
     required this.clientId,
     required this.child,
     this.appName,
-    String? applicaionId,
-    @Deprecated("Use 'applicaionId' instead.") String? androidApplicaionId,
+    String? applicationId,
+    @Deprecated("Use 'applicationId' instead.") String? androidapplicationId,
     this.socketEndpoint = kDebugMode
         ? "ws://localhost:4001/socket/websocket"
         : "wss://api.lenra.io/socket/websocket",
@@ -89,8 +89,8 @@ class LenraApplication extends StatefulWidget {
   }) {
     this.oauthRedirectPort =
         oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
-    this.applicaionId =
-        applicaionId ?? androidApplicaionId ?? defaultApplicationId;
+    this.applicationId =
+        applicationId ?? androidapplicationId ?? defaultApplicationId;
   }
 
   @override
@@ -110,14 +110,14 @@ class _LenraApplicationState extends State<LenraApplication> {
         LenraOauth2Helper(
           baseUri: widget.oauthBaseUri,
           redirectUri: getPlatformRedirectUri(
-            applicationId: widget.applicaionId,
+            applicationId: widget.applicationId,
             oauthRedirectPort: widget.oauthRedirectPort,
             oauthRedirectPath: widget.oauthRedirectPath,
           ),
           clientId: widget.clientId,
           clientSecret: widget.clientSecret,
           customUriScheme: getPlatformCustomUriScheme(
-            applicationId: widget.applicaionId,
+            applicationId: widget.applicationId,
             oauthRedirectPort: widget.oauthRedirectPort,
           ),
           scopes: widget.scopes,
@@ -126,10 +126,10 @@ class _LenraApplicationState extends State<LenraApplication> {
       isLogging = true;
     } else {
       gettingLocalToken = true;
-      oauth2.getTokenFromStorage().then((token) {
+      oauth2.isAuthenticated().then((value) {
         setState(() {
           gettingLocalToken = false;
-          isLogging = token != null;
+          isLogging = value;
         });
       });
     }
