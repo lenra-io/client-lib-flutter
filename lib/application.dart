@@ -153,12 +153,12 @@ class _LenraApplicationState extends State<LenraApplication> {
                   child: widget.child,
                 );
               } else {
-                Future<void>.delayed(const Duration()).then(
-                  (val) => setState(() {
+                WidgetsBinding.instance.addPostFrameCallback((context) {
+                  setState(() {
                     error = snapshot.error;
                     if (widget.loginWidgetBuilder != null) isLogging = false;
-                  }),
-                );
+                  });
+                });
                 return Container();
               }
             }
