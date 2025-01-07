@@ -10,6 +10,7 @@ class SocketManager extends StatefulWidget {
   final String endpoint;
   final Widget child;
   final AccessTokenResponse token;
+  final bool autoConnect;
 
   const SocketManager({
     Key? key,
@@ -17,6 +18,7 @@ class SocketManager extends StatefulWidget {
     required this.child,
     required this.token,
     this.appName,
+    this.autoConnect = false,
   }) : super(key: key);
 
   @override
@@ -27,6 +29,7 @@ class SocketManager extends StatefulWidget {
 
 class _SocketManagerState extends State<SocketManager> {
   late PhoenixSocket socket;
+  bool connected = false;
 
   @override
   void initState() {
@@ -46,27 +49,58 @@ class _SocketManagerState extends State<SocketManager> {
       params,
     );
 
-    socket.onError((error) => throw error);
+    socket.onOpen(() {
+      if (mounted) {
+        setState(() {
+          connected = true;
+        });
+      }
+    });
+    socket.onClose((_) {
+      if (mounted) {
+        setState(() {
+          connected = false;
+        });
+      }
+    });
+    socket.onError((error) {
+      throw error;
+    });
+    if (widget.autoConnect) {
+      socket.connect();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return LenraSocket(
       socket: socket,
+      connected: connected,
       child: widget.child,
     );
+  }
+
+  @override
+  void dispose() {
+    socket.disconnect();
+    super.dispose();
   }
 }
 
 class LenraSocket extends InheritedWidget {
   final PhoenixSocket socket;
+  final bool connected;
 
-  const LenraSocket({super.key, required super.child, required this.socket});
+  const LenraSocket(
+      {super.key,
+      required super.child,
+      required this.socket,
+      required this.connected});
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
     if (oldWidget is! LenraSocket) return true;
-    return oldWidget.socket != socket;
+    return oldWidget.connected != connected || oldWidget.socket != socket;
   }
 
   static LenraSocket? maybeOf(BuildContext context) {

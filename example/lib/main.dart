@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       home: LenraApplication(
           clientId: 'XXX-XXX-XXX',
           child: const MyHomePage(title: 'Flutter Demo Home Page'),
-          loginWidgetBuilder: (BuildContext context, VoidCallback login) =>
+          loginWidgetBuilder: (BuildContext context, VoidCallback login, Object? error) =>
               Scaffold(
                 body: Center(
                   child: TextButton(

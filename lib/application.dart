@@ -10,7 +10,8 @@ import 'package:oauth2_client/access_token_response.dart';
 
 const defaultLoader = Center(child: CircularProgressIndicator());
 
-typedef LoginWidgetBuilder = Widget Function(BuildContext, VoidCallback);
+typedef LoginWidgetBuilder = Widget Function(
+    BuildContext, VoidCallback, Object?);
 
 /// A widget that handles the Lenra OAuth2 authentication flow.
 class LenraApplication extends StatefulWidget {
@@ -20,7 +21,7 @@ class LenraApplication extends StatefulWidget {
   /// The UI to show during the authentication flow.
   final Widget? loader;
 
-  /// The UI to show after the authentication flow.
+  /// The UI to show before the authentication flow.
   final LoginWidgetBuilder? loginWidgetBuilder;
 
   /// The lenra instance's OAuth base URI.
@@ -48,7 +49,7 @@ class LenraApplication extends StatefulWidget {
 
   /// The Android application id.
   /// Not needed if you don't create an Android app.
-  late String applicaionId;
+  late String applicationId;
 
   /// The OAuth2 scopes.
   /// Defaults to `["app:websocket"]`
@@ -61,14 +62,17 @@ class LenraApplication extends StatefulWidget {
   /// The OAuth2 helper for customizing OAuth configuration.
   final LenraOauth2Helper? oauth2helper;
 
+  /// Once logged in auto connect the socket.
+  final bool autoConnect;
+
   /// Creates a new instance of [LenraOauth2Widget].
   LenraApplication({
     super.key,
     required this.clientId,
     required this.child,
     this.appName,
-    String? applicaionId,
-    @Deprecated("Use 'applicaionId' instead.") String? androidApplicaionId,
+    String? applicationId,
+    @Deprecated("Use 'applicationId' instead.") String? androidapplicationId,
     this.socketEndpoint = kDebugMode
         ? "ws://localhost:4001/socket/websocket"
         : "wss://api.lenra.io/socket/websocket",
@@ -81,11 +85,12 @@ class LenraApplication extends StatefulWidget {
     this.loader,
     this.loginWidgetBuilder,
     this.oauth2helper,
+    this.autoConnect = false,
   }) {
     this.oauthRedirectPort =
         oauthRedirectPort ?? (kIsWeb ? Uri.base.port : 10000);
-    this.applicaionId =
-        applicaionId ?? androidApplicaionId ?? defaultApplicationId;
+    this.applicationId =
+        applicationId ?? androidapplicationId ?? defaultApplicationId;
   }
 
   @override
@@ -96,6 +101,7 @@ class _LenraApplicationState extends State<LenraApplication> {
   late LenraOauth2Helper oauth2;
   bool gettingLocalToken = true;
   bool isLogging = false;
+  Object? error;
 
   @override
   void initState() {
@@ -104,14 +110,14 @@ class _LenraApplicationState extends State<LenraApplication> {
         LenraOauth2Helper(
           baseUri: widget.oauthBaseUri,
           redirectUri: getPlatformRedirectUri(
-            applicationId: widget.applicaionId,
+            applicationId: widget.applicationId,
             oauthRedirectPort: widget.oauthRedirectPort,
             oauthRedirectPath: widget.oauthRedirectPath,
           ),
           clientId: widget.clientId,
           clientSecret: widget.clientSecret,
           customUriScheme: getPlatformCustomUriScheme(
-            applicationId: widget.applicaionId,
+            applicationId: widget.applicationId,
             oauthRedirectPort: widget.oauthRedirectPort,
           ),
           scopes: widget.scopes,
@@ -120,10 +126,10 @@ class _LenraApplicationState extends State<LenraApplication> {
       isLogging = true;
     } else {
       gettingLocalToken = true;
-      oauth2.getTokenFromStorage().then((token) {
+      oauth2.isAuthenticated().then((value) {
         setState(() {
           gettingLocalToken = false;
-          isLogging = token != null;
+          isLogging = value;
         });
       });
     }
@@ -138,18 +144,25 @@ class _LenraApplicationState extends State<LenraApplication> {
           future: oauth2.getToken(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Text('Error ${snapshot.error}');
+              if (!snapshot.hasError) {
+                return SocketManager(
+                  appName: widget.appName,
+                  endpoint: widget.socketEndpoint,
+                  token: snapshot.data as AccessTokenResponse,
+                  autoConnect: widget.autoConnect,
+                  child: widget.child,
+                );
+              } else {
+                WidgetsBinding.instance.addPostFrameCallback((context) {
+                  setState(() {
+                    error = snapshot.error;
+                    if (widget.loginWidgetBuilder != null) isLogging = false;
+                  });
+                });
+                return Container();
               }
-              return SocketManager(
-                appName: widget.appName,
-                endpoint: widget.socketEndpoint,
-                token: snapshot.data as AccessTokenResponse,
-                child: widget.child,
-              );
-            } else {
-              return widget.loader ?? defaultLoader;
             }
+            return widget.loader ?? defaultLoader;
           },
         ),
       );
@@ -160,7 +173,7 @@ class _LenraApplicationState extends State<LenraApplication> {
         setState(() {
           isLogging = true;
         });
-      });
+      }, error);
     }
   }
 }
