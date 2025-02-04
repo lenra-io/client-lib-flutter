@@ -55,7 +55,7 @@ class LenraRoute {
         .receive(
           "error",
           (response) => completer
-              .completeError("An error occured while calling the listener"),
+              .completeError("An error occurred while calling the listener"),
         );
 
     return completer.future;
