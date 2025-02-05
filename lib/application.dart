@@ -98,15 +98,12 @@ class LenraApplication extends StatefulWidget {
 }
 
 class _LenraApplicationState extends State<LenraApplication> {
-  late LenraOauth2Helper oauth2;
-  bool gettingLocalToken = true;
-  bool isLogging = false;
-  Object? error;
+  late LenraOauth2Controller oauth2Controller;
 
   @override
   void initState() {
     super.initState();
-    oauth2 = widget.oauth2helper ??
+    var oauth2 = widget.oauth2helper ??
         LenraOauth2Helper(
           baseUri: widget.oauthBaseUri,
           redirectUri: getPlatformRedirectUri(
@@ -122,58 +119,64 @@ class _LenraApplicationState extends State<LenraApplication> {
           ),
           scopes: widget.scopes,
         );
+    oauth2Controller = LenraOauth2Controller(oauth2);
+    oauth2Controller.addListener(() {
+      setState(() {});
+    });
     if (widget.loginWidgetBuilder == null) {
-      isLogging = true;
+      oauth2Controller.login();
     } else {
-      gettingLocalToken = true;
-      oauth2.isAuthenticated().then((value) {
-        setState(() {
-          gettingLocalToken = false;
-          isLogging = value;
-        });
-      });
+      oauth2Controller.checkAuthentication();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLogging) {
-      return LenraOauth2(
-        helper: oauth2,
-        child: FutureBuilder(
-          future: oauth2.getToken(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (!snapshot.hasError) {
-                return SocketManager(
-                  appName: widget.appName,
-                  endpoint: widget.socketEndpoint,
-                  token: snapshot.data as AccessTokenResponse,
-                  autoConnect: widget.autoConnect,
-                  child: widget.child,
-                );
-              } else {
-                WidgetsBinding.instance.addPostFrameCallback((context) {
-                  setState(() {
-                    error = snapshot.error;
-                    if (widget.loginWidgetBuilder != null) isLogging = false;
-                  });
-                });
-                return Container();
-              }
-            }
-            return widget.loader ?? defaultLoader;
-          },
+    if (oauth2Controller.status == LoginStatus.loggedIn) {
+      return LenraApp(
+        oauth2Controller: oauth2Controller,
+        // ignore: deprecated_member_use_from_same_package
+        child: LenraOauth2(
+          helper: oauth2Controller.helper,
+          child: SocketManager(
+            appName: widget.appName,
+            endpoint: widget.socketEndpoint,
+            token: oauth2Controller.token as AccessTokenResponse,
+            autoConnect: widget.autoConnect,
+            child: widget.child,
+          ),
         ),
       );
-    } else if (gettingLocalToken) {
-      return widget.loader ?? defaultLoader;
-    } else {
-      return widget.loginWidgetBuilder!(context, () {
-        setState(() {
-          isLogging = true;
-        });
-      }, error);
+    } else if (oauth2Controller.status == LoginStatus.loggedOut) {
+      return widget.loginWidgetBuilder!(
+        context,
+        oauth2Controller.login,
+        oauth2Controller.error,
+      );
     }
+    return widget.loader ?? defaultLoader;
+  }
+}
+
+class LenraApp extends InheritedWidget {
+  final LenraOauth2Controller oauth2Controller;
+
+  const LenraApp(
+      {super.key, required super.child, required this.oauth2Controller});
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    if (oldWidget is! LenraApp) return true;
+    return oldWidget.oauth2Controller != oauth2Controller;
+  }
+
+  static LenraApp? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<LenraApp>();
+  }
+
+  static LenraApp of(BuildContext context) {
+    final LenraApp? result = maybeOf(context);
+    assert(result != null, 'No LenraApp found in context');
+    return result!;
   }
 }
