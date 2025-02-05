@@ -98,10 +98,6 @@ class LenraApplication extends StatefulWidget {
 }
 
 class _LenraApplicationState extends State<LenraApplication> {
-  // late LenraOauth2Helper oauth2;
-  // bool gettingLocalToken = true;
-  // bool isLogging = false;
-  // Object? error;
   late LenraOauth2Controller oauth2Controller;
 
   @override
@@ -137,14 +133,17 @@ class _LenraApplicationState extends State<LenraApplication> {
   @override
   Widget build(BuildContext context) {
     if (oauth2Controller.status == LoginStatus.loggedIn) {
-      return LenraOauth2(
-        helper: oauth2Controller.helper,
-        child: SocketManager(
-          appName: widget.appName,
-          endpoint: widget.socketEndpoint,
-          token: oauth2Controller.token as AccessTokenResponse,
-          autoConnect: widget.autoConnect,
-          child: widget.child,
+      return LenraApp(
+        oauth2Controller: oauth2Controller,
+        child: LenraOauth2(
+          helper: oauth2Controller.helper,
+          child: SocketManager(
+            appName: widget.appName,
+            endpoint: widget.socketEndpoint,
+            token: oauth2Controller.token as AccessTokenResponse,
+            autoConnect: widget.autoConnect,
+            child: widget.child,
+          ),
         ),
       );
     } else if (oauth2Controller.status == LoginStatus.loggedOut) {
