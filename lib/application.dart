@@ -135,6 +135,7 @@ class _LenraApplicationState extends State<LenraApplication> {
     if (oauth2Controller.status == LoginStatus.loggedIn) {
       return LenraApp(
         oauth2Controller: oauth2Controller,
+        // ignore: deprecated_member_use_from_same_package
         child: LenraOauth2(
           helper: oauth2Controller.helper,
           child: SocketManager(

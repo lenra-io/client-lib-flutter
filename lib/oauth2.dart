@@ -108,7 +108,7 @@ String getPlatformRedirectUri({
   return "http://localhost:$oauthRedirectPort$oauthRedirectPath";
 }
 
-@deprecated
+@Deprecated("Use 'LenraApp' with the 'oauth2Controller'.")
 class LenraOauth2 extends InheritedWidget {
   final LenraOauth2Helper helper;
 
