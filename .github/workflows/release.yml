@@ -9,7 +9,7 @@ on:
       - "*.x"
 
 env:
-  flutter_version: "3.13.0"
+  flutter_version: "3.27.3"
 
 jobs:
   get-next-version:
