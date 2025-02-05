@@ -87,7 +87,6 @@ class _SocketManagerState extends State<SocketManager> {
   }
 }
 
-@deprecated
 class LenraSocket extends InheritedWidget {
   final PhoenixSocket socket;
   final bool connected;
